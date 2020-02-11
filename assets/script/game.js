@@ -22,12 +22,12 @@ let usrID = genUsrID();
 console.log("USRID:" + usrID);
 
 let allConn = database.ref("mpRPS/connections/");
-let connRef = database.ref("mpRPS/connections/" + usrID);
+let connRef = database.ref("mpRPS/connections/" + usrID); // individual connection ref
 
 let connectedRef = database.ref(".info/connected");
 
 let allPlayer = database.ref("mpRPS/players/");
-let playersRef = database.ref("mpRPS/players/" + usrID);
+let playersRef = database.ref("mpRPS/players/" + usrID); // individual player ref
 
 let numOfUsr = 0;
 
@@ -43,45 +43,27 @@ function removePlayer() {
 }
 
 connectedRef.on("value", function(snap) { // when connection state changes
-
+    if(numOfUsr > 2) {
+        console.warn("too many users");
+    }
     if (snap.val()) { // if connected
         var con = connRef.push(true);
         con.onDisconnect().remove(removePlayer);
     }
 });
 
-allConn.on("value", function(snap) { // when connections list is updated
+allConn.on("value", function(snap) { 
+    console.log('allConn numofchildren: ' + snap.numChildren())
     numOfUsr = snap.numChildren();
-    if(numOfUsr > 2) { // if max players exceeded
-        console.log(players);
-        for(i = 0; i < players.length; i++) { // loop thru players array
-            if(player[i].id === usrID) { // if current user is currently playing
-                return false;
-            }
-            else if(i === 1) {
-                alert("Max player limit reached. Please wait until current users are finished");
-                window.location.replace("https://google.com");
-            }
-        }
-    }
-    //console.log("plength" + players.length);
-    if(players.length < 2) {
-        let player = {
-            player: numOfUsr,
-            id: conInfo.usrID,
-        };
-        playersRef.push(player);
-        // console.log("new player added");
-    }
-
-
     $("#numOfUsr").text(numOfUsr);
+    let player = {
+        player: numOfUsr,
+        id: conInfo.usrID,
+    };
+    playersRef.push(player);
 });
 
 allPlayer.on("child_added", function(snap) {
-    // console.log("Players snap: ");
-    // console.log(snap.val());
-
     players.push(snap.val());
     console.log('Players Array: ');
     console.log(players);
