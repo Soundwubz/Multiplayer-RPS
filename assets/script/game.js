@@ -43,24 +43,25 @@ function removePlayer() {
 }
 
 connectedRef.on("value", function(snap) { // when connection state changes
-    if(numOfUsr > 2) {
-        console.warn("too many users");
-    }
     if (snap.val()) { // if connected
         var con = connRef.push(true);
-        con.onDisconnect().remove(removePlayer);
+        con.onDisconnect().remove();
     }
 });
 
 allConn.on("value", function(snap) { 
     console.log('allConn numofchildren: ' + snap.numChildren())
     numOfUsr = snap.numChildren();
-    $("#numOfUsr").text(numOfUsr);
-    let player = {
-        player: numOfUsr,
-        id: conInfo.usrID,
-    };
-    playersRef.push(player);
+    if(players.length > 2) {
+        console.warn("too many users");
+    } else {
+        $("#numOfUsr").text(numOfUsr);
+        let player = {
+            player: numOfUsr,
+            id: conInfo.usrID,
+        };
+        playersRef.push(player);
+    }
 });
 
 allPlayer.on("child_added", function(snap) {
