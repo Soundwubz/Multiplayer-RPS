@@ -38,10 +38,6 @@ let conInfo = {
 
 let players = [];
 
-function removePlayer() {
-    console.log('remove');
-}
-
 connectedRef.on("value", function(snap) { // when connection state changes
     if (snap.val()) { // if connected
         var con = connRef.push(true);
@@ -50,7 +46,7 @@ connectedRef.on("value", function(snap) { // when connection state changes
 });
 
 allConn.on("value", function(snap) { 
-    console.log('allConn numofchildren: ' + snap.numChildren())
+    // console.log('allConn numofchildren: ' + snap.numChildren())
     numOfUsr = snap.numChildren();
     if(players.length > 2) {
         console.warn("too many users");
@@ -60,14 +56,27 @@ allConn.on("value", function(snap) {
             player: numOfUsr,
             id: conInfo.usrID,
         };
-        playersRef.push(player);
+        playersRef.set(player);
+        playersRef.onDisconnect().remove();
     }
 });
 
 allPlayer.on("child_added", function(snap) {
     players.push(snap.val());
-    console.log('Players Array: ');
+    console.log('Player Added. Updated array: ');
     console.log(players);
 });
 
-// REMOVE ENTRY FROM PLAYERS WHEN CON HAS DISCONNECTION
+allPlayer.on("child_removed", function(snap) {
+    let id = snap.val().usrID;
+    for(i = 0; i < players.length; i++) {
+        if(id === players[i].usrID) {
+            players.splice(i, 1);
+            break;
+        }
+    }
+    console.warn('Player removed from database: ');
+    console.log(snap.val());
+    console.log('Updated player array');
+    console.log(players);
+})
