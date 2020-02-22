@@ -38,6 +38,8 @@ let conInfo = {
 
 let players = [];
 
+let gameInProg = false;
+
 connectedRef.on("value", function(snap) { // when connection state changes
     if (snap.val()) { // if connected
         var con = connRef.push(true);
@@ -51,6 +53,13 @@ allConn.on("value", function(snap) {
     if(players.length > 2) {
         console.warn("too many users");
     } else {
+        if(numOfUsr > 1) {
+            $("#infoText").text("Get ready to play!");
+            // run function to start game
+            setTimeout(startGame, 2000);
+        } else {
+            $("#infoText").text("Waiting for second player");
+        }
         $("#numOfUsr").text(numOfUsr);
         let player = {
             player: numOfUsr,
@@ -80,3 +89,53 @@ allPlayer.on("child_removed", function(snap) {
     console.log('Updated player array');
     console.log(players);
 })
+
+// ----------------------------------------
+
+function startGame() {
+    let toolContainer = $('.tool-container');
+    let num = 5;
+    var countDown = setInterval(function() {
+        $('#infoText').text('Game will begin in ' + num + ' seconds...');
+        num--;
+        if(num === 0) {
+            clearInterval(countDown);
+            $('#infoText').text('Game has begun! Choose your tool!');
+            if(toolContainer.attr("data-hide") === "true") {
+                toolContainer.css('display', 'block');
+                toolContainer.attr("data-hide", "false");
+                gameInProg = true;
+            }
+        }
+    }, 1000);
+}
+
+function pushSelection(key) {
+    playersRef.update({
+        keySelected: key
+    });
+
+    // add logic to check for other players key selection
+    // if both have key, compare and return results
+    // else wait for other player
+}
+
+document.onkeyup = function(event) {
+    let key = event.key
+    if(gameInProg) {
+        console.log(key);
+        switch(key) {
+            case "r":
+                pushSelection(key);
+                break;
+            case "p":
+                pushSelection(key);
+                break;
+            case "s":
+                pushSelection(key);
+                break;
+            default:
+                return false;
+        }
+    }
+}

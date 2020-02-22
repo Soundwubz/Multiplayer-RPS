@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>MP Rock Paper Scissors</title>
+    <link href="./assets/css/main.css" rel="stylesheet" type="text/css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.8.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.8.1/firebase-database.js"></script>
@@ -15,7 +16,22 @@
 <body>
     <p>Connected Users: <span id="numOfUsr">0</span></p>
 
-    <!-- <h1 id="infoText">Waiting for second player...</h1> -->
+    <h1 id="infoText">Waiting for second player...</h1>
+
+    <div class="tool-container" data-hide="true">
+        <div class="tool">
+            <h2>Rock</h2>
+            <p>Press R</p>
+        </div>
+        <div class="tool">
+            <h2>Paper</h2>
+            <p>Press P</p>
+        </div>
+        <div class="tool">
+            <h2>Scissors</h2>
+            <p>Press S</p>
+        </div>
+    </div>
 
     <script src="./assets/script/game.js" type="text/javascript"></script>
 </body>
