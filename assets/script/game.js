@@ -29,6 +29,8 @@ let connectedRef = database.ref(".info/connected");
 let allPlayer = database.ref("mpRPS/players/");
 let playersRef = database.ref("mpRPS/players/" + usrID); // individual player ref
 
+let winnerRef = database.ref("mpRPS/winner");
+
 let numOfUsr = 0;
 
 let conInfo = {
@@ -39,6 +41,8 @@ let conInfo = {
 let players = [];
 
 let gameInProg = false;
+
+let toolContainer = $('.tool-container');
 
 connectedRef.on("value", function(snap) { // when connection state changes
     if (snap.val()) { // if connected
@@ -92,31 +96,38 @@ allPlayer.on("child_removed", function(snap) {
 
 // ----------------------------------------
 
+
+
 function startGame() {
-    let toolContainer = $('.tool-container');
+    winnerRef.remove();
     let num = 5;
     var countDown = setInterval(function() {
         $('#infoText').text('Game will begin in ' + num + ' seconds...');
-        num--;
         if(num === 0) {
             clearInterval(countDown);
-            $('#infoText').text('Game has begun! Choose your tool!');
+            $('#infoText').text('Game has begun! Make a selection on your keyboard!');
             if(toolContainer.attr("data-hide") === "true") {
                 toolContainer.css('display', 'block');
                 toolContainer.attr("data-hide", "false");
                 gameInProg = true;
             }
         }
+        num--;
     }, 1000);
 }
 
+
 function gameOver(winner) {
+    winnerRef.push(winner);
     console.log('Winner: ' + winner);
-    if(winner === usrID) {
+    if(winner === usrID.toString()) {
         alert("You've Won!");
     } else {
         alert("You've lost :(");
     }
+    // let localUrl = 'http://127.0.0.1:5500/';
+    let url = 'https://soundwubz.github.io/Multiplayer-RPS/';
+    window.location.replace(url + "game-over.html")
 }
 
 function pushSelection(key) {
@@ -146,6 +157,11 @@ function pushSelection(key) {
             gameOver(winner);
         } else { // if player is waiting for opposite player to make selection 
             console.log('a player still needs to make a selection');
+            winnerRef.once("child_added", (snap) => {
+                let winner = snap.val();
+                console.log('Winner recieved from server.');
+                gameOver(winner);
+            });
             // make new db ref to list winner of the game
             // or make it a property on the player
             // when winner is listed run gameOver function
@@ -178,18 +194,32 @@ function compareKeys(keys) {
     }
 }
 
+function transitionKey(key) {
+    let keyContainer = $('#' + key);
+    let keyClasses = keyContainer.attr('class');
+    let staticClasses = keyClasses;
+    let animatedClasses = keyClasses + " tool-pressed";
+    keyContainer.attr('class', animatedClasses);
+    setTimeout(function() {
+        keyContainer.attr('class', staticClasses);
+    }, 1000);
+}
+
 document.onkeyup = function(event) {
     let key = event.key
     if(gameInProg) {
         console.log(key);
         switch(key) {
             case "r":
+                transitionKey(key);
                 pushSelection(key);
                 break;
             case "p":
+                transitionKey(key);
                 pushSelection(key);
                 break;
             case "s":
+                transitionKey(key);
                 pushSelection(key);
                 break;
             default:

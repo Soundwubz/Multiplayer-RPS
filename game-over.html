@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME OVER - RPS</title>
+
+    <link href="./assets/css/main.css" rel="stylesheet" type="text/css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" type=""></script>
+</head>
+<body>
+
+    <div class="jumbotron bg-dark" style="border-radius: 0px;">  
+        <h1 class="display-2 text-white">Game Over</h1>
+        <p class="lead text-light">Thank you for playing!</p>
+    </div>
+    <div class="container">
+        <button type="button" class="btn btn-primary btn-lg" id="replayBtn">Click to play again</button>
+    </div>
+
+    <script>
+        $("#replayBtn").on('click', () => {
+            let localUrl = "http://127.0.0.1:5500/";
+            let url = 'https://soundwubz.github.io/Multiplayer-RPS/';
+            window.location.replace(url);
+        })
+    </script>
+</body>
+</html>
